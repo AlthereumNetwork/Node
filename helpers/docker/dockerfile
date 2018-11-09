@@ -1,0 +1,46 @@
+FROM centos:7
+
+RUN yum -y update && yum clean all; yum install -y gcc git make && yum clean all; rm -rf /var/cache/yum
+
+COPY ./ /node/src
+WORKDIR /node/src
+
+COPY ./helpers/scripts /node/scripts
+COPY ./helpers/pre-defined /node/pre-defined
+
+COPY ./lib /tmp/
+RUN tar -C /usr/local -xzf /tmp/go1.10.3.linux-amd64.tar.gz
+
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+ENV PATH $PATH:/node/bin/
+
+RUN make all
+RUN mv ./build/bin /node/bin
+WORKDIR /node
+RUN rm -rf /node/src
+
+# Make ports available to the world outside this container
+EXPOSE 8545
+EXPOSE 39391
+EXPOSE 39393
+# EXPOSE 39394
+
+WORKDIR /node/
+
+# Define environment variable
+# ENV NAME NodeJsTest
+
+# Run app.py when the container launches
+# CMD ["npm", "start"]
+
+# ENTRYPOINT source /etc/profile && /node/testNodes/deployTestNodes.sh && /bin/bash
+# ENTRYPOINT source /etc/profile && /node/testNodes/deployTestNodes.sh && /bin/bash
+
+# ---------------
+
+ENV datadir "/node/env/node"
+RUN ./scripts/setup.sh $datadir
+
+COPY ./helpers/scripts/startup.sh /etc/profile.d/
+RUN source /etc/profile
+

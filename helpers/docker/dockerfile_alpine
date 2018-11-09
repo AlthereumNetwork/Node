@@ -1,0 +1,43 @@
+FROM alpine:3.8
+
+RUN apk add --no-cache make git gcc curl tar
+
+COPY ./ /node/src
+WORKDIR /node/src
+
+COPY ./lib /tmp/
+# RUN curl https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz -o /tmp/go1.10.3.tar.gz
+# RUN tar -C /usr/local -xzf /tmp/go1.10.3.tar.gz
+
+# RUN make all
+# RUN mv ./build/bin /node/bin
+# RUN rm -rf /node/src
+
+
+# RUN export PATH=$PATH:/usr/local/go/bin
+# RUN source $HOME/.profile
+# ENV GOPATH /go
+# ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+
+# COPY ./lib/loginScript.sh /etc/profile.d/
+# RUN source /etc/profile
+
+RUN export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
+ENV PATH $PATH:/node/bin/
+
+# Make ports available to the world outside this container
+EXPOSE 8545
+EXPOSE 39391
+EXPOSE 39393
+# EXPOSE 39394
+
+WORKDIR /node/
+
+# Define environment variable
+# ENV NAME NodeJsTest
+
+# Run app.py when the container launches
+# CMD ["npm", "start"]
+
+# ENTRYPOINT source /etc/profile && /node/testNodes/deployTestNodes.sh && /bin/bash
+# ENTRYPOINT source /etc/profile && /node/testNodes/deployTestNodes.sh && /bin/bash
